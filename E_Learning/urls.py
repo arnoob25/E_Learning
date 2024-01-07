@@ -15,12 +15,19 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.views.generic.base import RedirectView
 from django.urls import path
 from django.urls import include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    # authentication
+    # connecting apps
     path('account/', include('user_auth.urls')),
+    path('dashboard/', include('dashboard.urls')),
+
+    # redirecting the users to dashboard
+    path('', RedirectView.as_view(pattern_name = 'dashboard:display_dashboard')),
+    path('home/', RedirectView.as_view(pattern_name = 'dashboard:display_dashboard')),
+    path('index/', RedirectView.as_view(pattern_name = 'dashboard:display_dashboard')),
 ]
