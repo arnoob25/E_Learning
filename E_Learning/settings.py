@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'user_auth',
+    'dashboard',
 ]
 
 MIDDLEWARE = [
@@ -127,5 +128,5 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'home'
+LOGIN_URL = 'user_auth:login'
+LOGIN_REDIRECT_URL = 'dashboard:display_dashboard'
