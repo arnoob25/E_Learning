@@ -25,6 +25,7 @@ urlpatterns = [
     # connecting apps
     path('account/', include('user_auth.urls')),
     path('dashboard/', include('dashboard.urls')),
+    path('article/', include('article.urls')),
 
     # redirecting the users to dashboard
     path('', RedirectView.as_view(pattern_name = 'dashboard:display_dashboard')),

@@ -4,7 +4,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import CreateView
 from . import forms
-from django.contrib.auth import get_user_model
+
 
 # Create your views here.
 
