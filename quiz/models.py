@@ -29,3 +29,4 @@ class Quiz(models.Model):
         permissions = [
             ('can_arrange_quiz', 'can arrange quiz'),
         ]
+

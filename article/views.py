@@ -28,13 +28,13 @@ class ViewArticle(DetailView):
 class ListArticles(ListView):
     model = models.Article
     template_name = 'article/list_of_articles.html'
-
+    
+    def get_queryset(self):
+        return super().get_queryset().order_by('-created_at', 'title')
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['page_heading'] = constants.GENERATE_PAGE_HEADING('Article')
         context['articles'] = self.get_queryset()
         context['empty_list_message'] = constants.GENERATE_EMPTY_LIST_MESSAGE('Article')
         return context
-
-    def get_queryset(self):
-        return super().get_queryset().order_by('-created_at', 'title')

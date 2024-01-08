@@ -1,8 +1,10 @@
 from typing import Any
+
+from django.db.models.query import QuerySet
 import constants
 from . import models
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, ListView
+from django.views.generic import CreateView, ListView, DetailView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 
 # Create your views here.
@@ -26,6 +28,9 @@ class ListQuizzes(ListView):
     model = models.Quiz
     template_name = 'quiz/list_of_quizzes.html'
 
+    def get_queryset(self):
+        return super().get_queryset().order_by('-created_at','title')
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['page_heading'] = constants.GENERATE_PAGE_HEADING('Quizze') # returns Quizzes
@@ -33,6 +38,6 @@ class ListQuizzes(ListView):
         context['empty_list_message'] = constants.GENERATE_EMPTY_LIST_MESSAGE('Quiz')
         return context
 
-class AttemptQuiz(ListView):
+class AttemptQuiz(DetailView):
     model = models.Quiz
     template_name = 'quiz/list_of_quizzes.html'

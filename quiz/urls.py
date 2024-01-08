@@ -6,7 +6,7 @@ app_name = 'quiz'
 
 urlpatterns = [
     path('new/', views.NewQuiz.as_view(), name = 'new'),
-    path('attempt/<slug:slug>', views.AttemptQuiz.as_view(), name = 'attempt'), # take slugs
+    path('attempt/<slug:slug>', views.AttemptQuiz.as_view(), name = 'attempt'),
     path('list/', views.ListQuizzes.as_view(), name = 'list'),
 
     # redirecting the users to quiz
