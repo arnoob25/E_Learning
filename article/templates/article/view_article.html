@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block body %}
+    
+    <a href="{% url 'article:list' %}">Go back to the list</a>
+
+    <h1>{{ article.title | title }}</h1>
+    <h3>By: @{{ article.created_by }}, at: {{ article.created_at | date }}</h3>
+
+    <hr>
+
+    <p>{{ article.body }}</p>
+
+{% endblock %}

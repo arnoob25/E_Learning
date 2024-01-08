@@ -1,14 +1,22 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    {{ request.resolver_match.url_name | title }}
+    {{ user.username | title }}'s Dashboard
 {% endblock %}
 
 {% block body %}
-    {% block dashboard %}
-        <h1>
-            {% block greeting %}
-            {% endblock %}
-        </h1>
-    {% endblock %}
+    <h1>
+        {% block greeting %}
+            Welcome, {{ user.username | title }}! 
+        {% endblock %}
+    </h1>
+
+    <form method="POST" action="{% url 'user_auth:logout' %}">
+        {% csrf_token %}
+        <input type="submit" value="logout" />
+    </form>
+
+    <div style="margin-top: 20px; padding: 30px 20px; border: 1px solid black;">
+        {% block dashboard %}{% endblock %}
+    </div>
 {% endblock %}

@@ -2,8 +2,12 @@
 
 {% block dashboard %}
 
-    {% block greeting %}
-        Welcomme Teacher
-    {% endblock %}
+    <form method="POST" action="{% url 'article:new' %}">
+        {% csrf_token %}
+        <input type="submit", value="New Article">
+    </form>
+
+    <br>
+    <a href="{% url 'article:list' %}">Articles</a>
 
 {% endblock %}
