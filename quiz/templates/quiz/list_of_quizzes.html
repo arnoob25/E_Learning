@@ -1,0 +1,7 @@
+{% extends 'display_list.html' %}
+
+{% block object_page %}
+  <a href="{% url 'quiz:attempt' object.slug%}"> 
+    <h2>{{ object.title|title }}</h2>
+  </a>
+{% endblock %}
