@@ -1,7 +1,7 @@
 from . import models
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.shortcuts import render
-from django.views.generic import CreateView, DetailView
+from django.views.generic import CreateView, DetailView, ListView
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.decorators import permission_required
 
@@ -9,7 +9,7 @@ from django.contrib.auth.decorators import permission_required
 class NewArticle(PermissionRequiredMixin, CreateView):
     permission_required = 'article.can_publish_article'
     raise_exception = True
-    
+
     model = models.Article
     fields = ['title', 'body']
     template_name = 'article/new_article.html'
@@ -25,3 +25,9 @@ class ViewArticle(DetailView):
     model = models.Article
     template_name = 'article/view_article.html'
 
+class ListArticles(ListView):
+    model = models.Article
+    template_name = 'article/article_list.html'
+
+    def get_queryset(self):
+        return super().get_queryset().order_by('-created_at', 'title')

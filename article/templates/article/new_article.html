@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block body %}
+    <a href="{% url 'dashboard:display_dashboard' %}">Go back to the dashboard</a>
 
     <form method="POST">
         {% csrf_token %}

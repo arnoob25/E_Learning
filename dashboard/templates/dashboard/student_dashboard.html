@@ -1,9 +1,6 @@
 {% extends 'dashboard/base_dashboard.html' %}
 
+
 {% block dashboard %}
-
-    {% block greeting %}
-        Welcomme, Student!
-    {% endblock %}
-
+    <a href="{% url 'article:list' %}">Articles</a>
 {% endblock %}

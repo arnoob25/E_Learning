@@ -12,6 +12,3 @@ class SignupView(CreateView):
     form_class = forms.SignupForm
     template_name = 'user_auth/user_auth.html'
     success_url = reverse_lazy('user_auth:login')
-
-class LoginView(LoginView):
-    template_name = 'user_auth/user_auth.html'
