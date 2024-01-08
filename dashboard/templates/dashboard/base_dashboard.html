@@ -1,22 +1,40 @@
 {% extends 'base.html' %}
 
 {% block title %}
-    {{ user.username | title }}'s Dashboard
+  {{ user.username|title }}'s Dashboard
 {% endblock %}
 
 {% block body %}
-    <h1>
-        {% block greeting %}
-            Welcome, {{ user.username | title }}! 
+
+  <h1>
+    {% block greeting %}
+      Welcome, {{ user.username|title }}!
+    {% endblock %}
+  </h1>
+
+  <form method="POST" action="{% url 'user_auth:logout' %}">
+    {% csrf_token %}
+    <input type="submit" value="logout" />
+  </form>
+
+
+  <!-- navigation/ tools -->
+  <div style="display: flex; border: 1px solid black; margin-top: 20px;">
+
+    <div style="flex: 1; padding: 30px 20px;">
+        {% block dashboard1 %}
         {% endblock %}
-    </h1>
-
-    <form method="POST" action="{% url 'user_auth:logout' %}">
-        {% csrf_token %}
-        <input type="submit" value="logout" />
-    </form>
-
-    <div style="margin-top: 20px; padding: 30px 20px; border: 1px solid black;">
-        {% block dashboard %}{% endblock %}
     </div>
+
+    <div style="flex: 1; padding: 30px 20px;">
+        {% block dashboard2 %}
+        {% endblock %}
+    </div>
+
+    <div style="flex: 1; padding: 30px 20px;">
+        {% block dashboard3 %}
+        {% endblock %}
+    </div>
+
+  </div>
 {% endblock %}

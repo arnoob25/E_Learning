@@ -1,6 +1,6 @@
 {% extends 'dashboard/base_dashboard.html' %}
 
-{% block dashboard %}
+{% block dashboard1 %}
 
     <form method="POST" action="{% url 'article:new' %}">
         {% csrf_token %}
@@ -10,4 +10,12 @@
     <br>
     <a href="{% url 'article:list' %}">Articles</a>
 
+{% endblock %}
+
+{% block dashboard2 %}
+    Quiz
+{% endblock %}
+
+{% block dashboard3 %}
+    Forum
 {% endblock %}
