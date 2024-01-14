@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  Quiz: {{ quiz.title|title }}
+{% endblock %}
+
+{% block body %}
+  <h1>Quiz: {{ quiz.title|title }}</h1>
+
+  <!-- create question with choices -->
+  <form method="POST">
+    <h2>Add a question:</h2>
+
+    <div style="border: 1px solid black; padding: 0px 20px 20px 20px ;">
+      {{ question_form.as_p }}
+
+      <p>Add choices:</p>
+
+      <div style="margin-left: 20px;">
+        {{ choice_formset.management_form }}
+        <ol type="A">
+          {% for form in choice_formset %}
+            <li>
+              <div style="display: flex; margin-bottom: 10px;">
+                <div style="flex: 1;">{{ form.title.label_tag }} {{ form.title }}</div>
+                <div style="flex: 5;">{{ form.is_correct.label_tag }} {{ form.is_correct }}</div>
+              </div>
+            </li>
+          {% endfor %}
+        </ol>
+      </div>
+
+      {% csrf_token %}
+
+      <br />
+      <input type="submit" value="Add question" />
+    </div>
+  </form>
+  <br />
+
+  <h2>Questions:</h2>
+  <hr />
+
+  <!-- list of questions already defined -->
+  <ol>
+    {% for question in question_list %}
+      <li>
+        <h3>{{ question.title|title }}</h3>
+
+        {% if question.choice_set.all %}
+          <p>Choices:</p>
+          <ol type="a">
+            {% for choice in question.choice_set.all %}
+              <li>
+                {{ choice.title }}
+                {% if choice.is_correct %}
+                  (Correct)
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ol>
+        {% else %}
+          <p>No choice available</p>
+        {% endif %}
+      </li>
+      {% empty %}Nothing yet
+    {% endfor %}
+  </ol>
+
+  <br />
+
+  {% if question_list %}
+    <h3><a href="{% url 'dashboard:display_dashboard' %}">Assign the Quiz</a></h3>
+  {% else %}
+    <h3><a>Assign the Quiz</a></h3>
+  {% endif %}
+{% endblock %}

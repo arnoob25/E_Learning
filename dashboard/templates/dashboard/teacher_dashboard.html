@@ -14,13 +14,14 @@
 
 {% block dashboard2 %}
 
-    <form method="POST" action="{% url 'quiz:new' %}">
+    <form method="POST" action="{% url 'quiz:new_quiz' %}">
         {% csrf_token %}
         <input type="submit", value="New Quiz">
     </form>
 
     <br>
-    <a href="{% url 'quiz:list' %}">View Assigned Quizzes</a>
+    <!-- we'll have to change this, the following link will take the teacher to the results page  -->
+    <a href="{% url 'quiz:list' %}">View Responses to Assigned Quizzes</a> 
 
 {% endblock %}
 

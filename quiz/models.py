@@ -25,8 +25,33 @@ class Quiz(models.Model):
     def __str__(self):
         return self.title
 
-    class Meta:
-        permissions = [
-            ('can_arrange_quiz', 'can arrange quiz'),
-        ]
+class Question(models.Model):
+    quiz = models.ForeignKey(Quiz, on_delete = models.CASCADE)
+    title = models.CharField(max_length = 200)
 
+    def __str__(self):
+        return self.title
+
+class Choice(models.Model):
+    question = models.ForeignKey(Question, on_delete = models.CASCADE)
+    title = models.CharField(max_length = 200)
+    is_correct = models.BooleanField(default = False)
+
+    def __str__(self):
+        return self.title
+
+class Attempt(models.Model):
+    quiz = models.ForeignKey(Quiz, on_delete = models.CASCADE)
+    attempted_by = models.ForeignKey(get_user_model(), blank = True, on_delete = models.CASCADE)
+    attempted_at = models.DateTimeField(auto_now_add = True)
+
+    def __str__(self):
+        return self.title
+
+class Response(models.Model):
+    attempt = models.ForeignKey(Attempt, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete = models.CASCADE)
+    choice = models.ManyToManyField(Choice)
+
+    def __str__(self):
+        return self.title

@@ -18,8 +18,3 @@ class Article(models.Model):
 
     def __str__(self):
         return self.title
-
-    class Meta:
-        permissions = [
-            ('can_publish_article', 'can publish article'),
-        ]
