@@ -1,14 +1,14 @@
+import constants
 from . import models
-from django.urls import reverse, reverse_lazy
-from django.shortcuts import render
+from django.urls import reverse
 from django.views.generic import CreateView, DetailView, ListView
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.contrib.auth.decorators import permission_required
 
 # Create your views here.
 class NewArticle(PermissionRequiredMixin, CreateView):
-    permission_required = 'article.can_publish_article'
+    permission_required = 'article.add_article'
     raise_exception = True
+    permission_denied_message = constants.PERMISSION_DENIED_MESSAGE
 
     model = models.Article
     fields = ['title', 'body']
@@ -27,7 +27,14 @@ class ViewArticle(DetailView):
 
 class ListArticles(ListView):
     model = models.Article
-    template_name = 'article/article_list.html'
-
+    template_name = 'article/list_of_articles.html'
+    
     def get_queryset(self):
         return super().get_queryset().order_by('-created_at', 'title')
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_heading'] = constants.GENERATE_PAGE_HEADING('Article')
+        context['articles'] = self.get_queryset()
+        context['empty_list_message'] = constants.GENERATE_EMPTY_LIST_MESSAGE('Article')
+        return context

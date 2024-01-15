@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ page_heading | title }}
+{% endblock %}
+
+{% block body %}
+    <a href="{% url 'dashboard:display_dashboard' %}">Go back to the dashboard</a>
+
+    <h1>{{ page_heading | title }}</h1>
+    
+    <hr>
+    {% for object in object_list%}
+        
+        {% block object_page %}
+            <a href="#">
+                <h2>
+                    {{ object.title | title }}
+                
+                </h2>
+            </a>
+        {% endblock object_page %}
+           
+
+        <p>{{ object.created_at }}</p>
+        <hr>
+    {% empty %}
+        <p>{{ empty_list_message }}</p>
+    {% endfor %}
+
+{% endblock body %}

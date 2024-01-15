@@ -8,12 +8,21 @@
     </form>
 
     <br>
-    <a href="{% url 'article:list' %}">Articles</a>
+    <a href="{% url 'article:list' %}">View Published Articles</a>
 
 {% endblock %}
 
 {% block dashboard2 %}
-    Quiz
+
+    <form method="POST" action="{% url 'quiz:new_quiz' %}">
+        {% csrf_token %}
+        <input type="submit", value="New Quiz">
+    </form>
+
+    <br>
+    <!-- we'll have to change this, the following link will take the teacher to the results page  -->
+    <a href="{% url 'quiz:list' %}">View Responses to Assigned Quizzes</a> 
+
 {% endblock %}
 
 {% block dashboard3 %}
