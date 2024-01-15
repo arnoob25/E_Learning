@@ -16,7 +16,5 @@ class Article(models.Model):
             self.slug = slugify(self.title)
         super().save(*args, **kwargs)
 
-    class Meta:
-        permissions = [
-            ('can_publish_article', 'can publish article'),
-        ]
+    def __str__(self):
+        return self.title

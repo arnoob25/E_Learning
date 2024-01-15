@@ -1,19 +1,23 @@
 {% extends 'base.html' %}
 
+
 {% block title %}
-    New Article
+    New Quiz
 {% endblock title %}
+
 
 {% block body %}
 
-    <h1>New Article</h1>
-
     <a href="{% url 'dashboard:display_dashboard' %}">Go back to the dashboard</a>
 
+    <h1>Arrange Quiz</h1>
+    
     <form method="POST">
-        {% csrf_token %}
         {{ form.as_p }}
-        <input type="submit" name="publish" value="Publish Article">
+        {% csrf_token %}
+
+        <input type="submit" value="Arrange Quiz">
     </form>
 
-{% endblock %}
+{% endblock body %}
+    

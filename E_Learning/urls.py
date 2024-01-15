@@ -14,10 +14,11 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.views.generic.base import RedirectView
+from . import views
 from django.urls import path
 from django.urls import include
+from django.contrib import admin
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,9 +27,10 @@ urlpatterns = [
     path('account/', include('user_auth.urls')),
     path('dashboard/', include('dashboard.urls')),
     path('article/', include('article.urls')),
+    path('quiz/', include('quiz.urls')),
 
-    # redirecting the users to dashboard
-    path('', RedirectView.as_view(pattern_name = 'dashboard:display_dashboard')),
-    path('home/', RedirectView.as_view(pattern_name = 'dashboard:display_dashboard')),
-    path('index/', RedirectView.as_view(pattern_name = 'dashboard:display_dashboard')),
+    # users will be redirected based on login status
+    path('', views.redirect_to_dashboard_or_website),
+    path('home/', views.redirect_to_dashboard_or_website),
+    path('index/', views.redirect_to_dashboard_or_website),
 ]
