@@ -6,7 +6,7 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 
 # Create your views here.
 class NewArticle(PermissionRequiredMixin, CreateView):
-    permission_required = 'article.can_publish_article'
+    permission_required = 'article.add_article'
     raise_exception = True
     permission_denied_message = constants.PERMISSION_DENIED_MESSAGE
 

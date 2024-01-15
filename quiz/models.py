@@ -46,12 +46,13 @@ class Attempt(models.Model):
     attempted_at = models.DateTimeField(auto_now_add = True)
 
     def __str__(self):
-        return self.title
+        return f'{(self.quiz.title)} {str(self.attempted_at)}'
 
 class Response(models.Model):
-    attempt = models.ForeignKey(Attempt, on_delete=models.CASCADE)
-    question = models.ForeignKey(Question, on_delete = models.CASCADE)
+    attempt = models.ForeignKey(Attempt, blank = True, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, blank = True, on_delete = models.CASCADE)
     choice = models.ManyToManyField(Choice)
+    is_correct = models.BooleanField(default = False)
 
     def __str__(self):
-        return self.title
+        return str(self.is_correct)

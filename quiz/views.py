@@ -3,6 +3,7 @@ import constants
 from . import models, forms
 from django.urls import reverse
 from django.forms import formset_factory
+from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
@@ -87,9 +88,7 @@ def newQuestions(request, slug):
 class ListQuizzes(ListView):
     model = models.Quiz
     template_name = 'quiz/list_of_quizzes.html'
-
-    def get_queryset(self):
-        return super().get_queryset().order_by('-created_at','title')
+    ordering = ['-created_at', 'title']
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -98,7 +97,135 @@ class ListQuizzes(ListView):
         context['empty_list_message'] = constants.GENERATE_EMPTY_LIST_MESSAGE('Quiz')
         return context
 
-# will require a permission - only students can attempt quizzes
-class AttemptQuiz(DetailView):
-    model = models.Quiz
-    template_name = 'quiz/list_of_quizzes.html'
+# helper functions for attemptQuiz - view
+
+def get_quiz(request, slug):
+    """
+    Gets the quiz and questions. Prefetches the choices for the questions. Handles errors.
+    """
+    try:
+        quiz = models.Quiz.objects.get(slug = slug)
+    except models.Quiz.DoesNotExist:
+        return redirect('dashboard:display_dashboard')
+    
+    question_list = models.Question.objects.filter(quiz = quiz).order_by('id').prefetch_related('choice_set')
+
+    return quiz, question_list
+
+def get_attempt(request, quiz):
+    """
+    Manages attempts, ensures accurate representation of student activity. Handles errors.
+    """
+
+    if 'attempt_id' not in request.session:
+        attempt = models.Attempt(
+            quiz = quiz, 
+            attempted_by = request.user,
+        )
+        attempt.save()
+        request.session['attempt_id'] = attempt.id # type: ignore
+    
+    else:
+        try:
+            attempt = models.Attempt.objects.get(
+                id = request.session['attempt_id']
+            )
+        except models.Attempt.DoesNotExist: 
+            return None 
+    
+    return attempt
+
+def evaluate_and_save_response(request, attempt, page_obj):
+    """
+    Evaluates the response, and saves it in the db.
+    """
+
+    # getting the correct choice
+    question = page_obj.object_list[0]
+    choice_set = question.choice_set.all()
+    correct_choice = choice_set.filter(is_correct = True)
+
+    response_form = forms.NewResponseForm(request.POST, page_obj = page_obj)
+
+    if response_form.is_valid():
+
+        selected_choice = response_form.cleaned_data['choice']
+        
+        is_correct = selected_choice in correct_choice
+        
+        # saving the response in the db
+        response = response_form.save(commit = False)
+        response.attempt = attempt
+        response.question = question
+        response.is_correct = is_correct
+
+        response.save()
+
+        response.choice.set([selected_choice])
+
+        return is_correct
+    
+    else:
+        logger.error("Response form is not valid.")
+
+    return False
+
+def control_progression(request, attempt, paginator):
+    """
+    Controls when the student gets to move on to the next question.
+    """
+
+    page_number = request.POST.get('page')
+    current_page = paginator.get_page(int(page_number))
+
+    is_correct = evaluate_and_save_response(request, attempt, current_page)
+
+    if not is_correct:
+        page_obj = current_page 
+
+    elif current_page.has_next():
+        page_obj = paginator.get_page(int(page_number) + 1)
+        is_correct = None
+
+    else: 
+        # end the attempt
+        if 'attempt_id' in request.session:
+            del request.session['attempt_id']
+
+        return None, None
+    
+    return page_obj, is_correct
+
+@permission_required('quiz.add_attempt', raise_exception = True)
+def attemptQuiz(request, slug):
+    quiz, question_list = get_quiz(request, slug)
+
+    attempt = get_attempt(request, quiz)
+    if attempt is None:
+        return redirect('quiz:list') 
+    
+    # ask a single question at a time
+    questions_in_a_page = 1
+    paginator = Paginator(question_list, questions_in_a_page)
+    total_pages = paginator.num_pages
+    page_obj = paginator.get_page(1)
+    
+    # handling responses to questions
+    if request.method == 'POST':
+        page_obj, is_correct = control_progression(request, attempt, paginator)
+
+        if page_obj is None and is_correct is None:
+            return redirect('dashboard:display_dashboard') # this should display the quiz summary page 
+    
+    else: is_correct = None
+
+    context = {
+        'quiz' : quiz,
+        'page_obj' : page_obj,
+        'total_pages' : total_pages,
+        'is_correct' : is_correct,
+        'response_form' : forms.NewResponseForm(page_obj = page_obj),
+    }
+
+    return render(request, 'quiz/attempt_quiz.html', context)
+

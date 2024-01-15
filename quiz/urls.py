@@ -10,7 +10,7 @@ urlpatterns = [
     path('new/<slug:slug>', views.newQuestions, name = 'new_questions'),
     
     # student - attempting the quiz
-    path('attempt/<slug:slug>', views.AttemptQuiz.as_view(), name = 'attempt'),
+    path('attempt/<slug:slug>', views.attemptQuiz, name = 'attempt'),
 
     # all users
     path('list/', views.ListQuizzes.as_view(), name = 'list'),

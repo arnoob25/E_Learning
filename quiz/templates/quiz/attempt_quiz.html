@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block body %}
+  <h1>{{ quiz.title }}</h1>
+
+  <form method="POST">
+    {% csrf_token %}
+
+    <h2>Question {{ page_obj.number }}/ {{ total_pages }}: {{ page_obj.object_list.0.title }}</h2>
+    <input type="hidden" name="page" value="{{ page_obj.number }}">
+
+    {{ response_form.as_p }}
+
+    <div>
+      <span>
+        {% if page_obj.has_next %}
+          <input type="submit" value="Check answer">
+        {% else %}
+          <input type="submit" value="Finish quiz">
+        {% endif %}
+      </span>
+    </div>
+  </form>
+{% endblock %}
