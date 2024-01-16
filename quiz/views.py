@@ -25,9 +25,10 @@ class NewQuiz(PermissionRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         return super().form_valid(form)
+        
     
     def get_success_url(self):
-        return reverse('quiz:new_questions', kwargs = {'slug': self.object.slug})
+        return reverse('quiz:new_questions', kwargs = {'slug': self.object.slug}) # type: ignore
 
 # business logic for newQuestions()
 def save_new_questions_with_choices(request, quiz):
