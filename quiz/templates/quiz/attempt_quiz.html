@@ -9,6 +9,14 @@
     <h2>Question {{ page_obj.number }}/ {{ total_pages }}: {{ page_obj.object_list.0.title }}</h2>
     <input type="hidden" name="page" value="{{ page_obj.number }}">
 
+    
+    {% if is_correct is False %}
+      <div>
+        <h4>Incorrect response</h4>
+      </div>
+    {% endif %}
+      
+
     {{ response_form.as_p }}
 
     <div>

@@ -48,11 +48,17 @@ class Attempt(models.Model):
     def __str__(self):
         return f'{(self.quiz.title)} {str(self.attempted_at)}'
 
+    class Meta: 
+        permissions = [
+            ('access_attempt', 'can access attempt')
+        ]
+
 class Response(models.Model):
     attempt = models.ForeignKey(Attempt, blank = True, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, blank = True, on_delete = models.CASCADE)
     choice = models.ManyToManyField(Choice)
     is_correct = models.BooleanField(default = False)
+    responded_at = models.DateTimeField(auto_now_add = True)
 
     def __str__(self):
         return str(self.is_correct)

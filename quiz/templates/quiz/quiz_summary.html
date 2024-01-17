@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block body %}
+  <h1>{{ quiz.title|title }}</h1>
+
+  <ol>
+    {% for attempt in attempt_list %}
+      <li>
+        <h2>
+          {{ attempt.attempted_at }} | 
+          Correct responses: {{ attempt.correct_responses }}/ {{ total_questions }}
+        </h2>
+
+        <ol type="A">
+          
+          {% for question in attempt.questions %}
+            <li>
+              <h4>
+                {{ question.title | title }}
+                
+                <ol type="i">
+                    {% for response in question.response_set.all %}
+                        {% if response in attempt.responses %}
+                          <li>
+                            Choice: 
+                            {% for choice in response.choice.all %}
+                              {{ choice.title }}
+                            {% endfor %}
+
+                            &nbsp
+                            
+                            {% if response.is_correct %}
+                              (Correct)
+                            {% else %}
+                              (Incorrect)
+                            {% endif %}
+                          </li>
+                        {% endif %}
+                    {% endfor %}
+                </ol>    
+              </h4>
+            </li>
+
+            {% empty %}
+            <!-- empty list warning -->
+          {% endfor %}
+            
+        </ol>
+      </li>
+
+      {% empty %}
+      <!-- empty list warning -->
+    {% endfor %}
+  </ol>
+
+  <a href="{% url 'dashboard:display_dashboard' %}">Go back to the dashboard</a>
+{% endblock %}

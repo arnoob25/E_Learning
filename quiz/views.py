@@ -1,21 +1,25 @@
 import logging
+
+from httpx import request
 import constants
 from . import models, forms
 from django.urls import reverse
 from django.forms import formset_factory
 from django.core.paginator import Paginator
-from django.shortcuts import render, redirect, HttpResponse
-from django.contrib.auth.decorators import permission_required
+from django.views.generic import CreateView, ListView
+from django.contrib.auth.models import Permission
 from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.views.generic import CreateView, ListView, DetailView
+from django.contrib.auth.decorators import permission_required
+from django.contrib.contenttypes.models import ContentType
+from django.shortcuts import render, redirect, HttpResponse
 
 logger = logging.getLogger(__name__)
 
-# Create your views here.
+# --- Teacher arranging a quiz ---
 
 class NewQuiz(PermissionRequiredMixin, CreateView):
+
     permission_required = 'quiz.add_quiz'
-    raise_exception = True
     permission_denied_message = constants.PERMISSION_DENIED_MESSAGE
 
     model = models.Quiz
@@ -61,7 +65,7 @@ def save_new_questions_with_choices(request, quiz):
         logger.error("Question form is not valid.")
         return False
 
-@permission_required('quiz.add_question', raise_exception = True)
+@permission_required('quiz.add_question')
 def newQuestions(request, slug):
     quiz = models.Quiz.objects.get(slug=slug)
 
@@ -85,7 +89,9 @@ def newQuestions(request, slug):
     }
 
     return render(request, 'quiz/new_questions.html', context=context)
-   
+
+
+
 class ListQuizzes(ListView):
     model = models.Quiz
     template_name = 'quiz/list_of_quizzes.html'
@@ -98,6 +104,10 @@ class ListQuizzes(ListView):
         context['empty_list_message'] = constants.GENERATE_EMPTY_LIST_MESSAGE('Quiz')
         return context
 
+
+
+# --- Student attempting a quiz ---
+    
 # helper functions for attemptQuiz - view
 
 def get_quiz(request, slug):
@@ -106,6 +116,7 @@ def get_quiz(request, slug):
     """
     try:
         quiz = models.Quiz.objects.get(slug = slug)
+
     except models.Quiz.DoesNotExist:
         return redirect('dashboard:display_dashboard')
     
@@ -117,7 +128,6 @@ def get_attempt(request, quiz):
     """
     Manages attempts, ensures accurate representation of student activity. Handles errors.
     """
-
     if 'attempt_id' not in request.session:
         attempt = models.Attempt(
             quiz = quiz, 
@@ -135,6 +145,27 @@ def get_attempt(request, quiz):
             return None 
     
     return attempt
+
+def assign_access_attempt_permission(request, quiz):
+    """
+    Gives the author of the quiz, and student who attempted it, the permission to access the results.
+    """
+    try:
+        student = request.user
+        quiz_author = quiz.created_by
+
+        content_type = ContentType.objects.get_for_model(models.Attempt)
+
+        permission = Permission.objects.get(
+            codename = 'access_attempt',
+            content_type = content_type,
+        )
+
+        student.user_permissions.add(permission)
+        quiz_author.user_permissions.add(permission)
+    
+    except Exception as error:
+        print(f"An error occurred: {error}")
 
 def evaluate_and_save_response(request, attempt, page_obj):
     """
@@ -197,11 +228,14 @@ def control_progression(request, attempt, paginator):
     
     return page_obj, is_correct
 
-@permission_required('quiz.add_attempt', raise_exception = True)
+@permission_required('quiz.add_attempt')
 def attemptQuiz(request, slug):
     quiz, question_list = get_quiz(request, slug)
 
     attempt = get_attempt(request, quiz)
+    if attempt:
+        assign_access_attempt_permission(request, quiz)
+
     if attempt is None:
         return redirect('quiz:list') 
     
@@ -216,7 +250,7 @@ def attemptQuiz(request, slug):
         page_obj, is_correct = control_progression(request, attempt, paginator)
 
         if page_obj is None and is_correct is None:
-            return redirect('dashboard:display_dashboard') # this should display the quiz summary page 
+            return redirect('quiz:summary', slug)
     
     else: is_correct = None
 
@@ -230,3 +264,40 @@ def attemptQuiz(request, slug):
 
     return render(request, 'quiz/attempt_quiz.html', context)
 
+#@permission_required('access_attempt')
+def displaySummary(request, slug):
+    """
+    Displays the summary of the quiz attempt.
+    """
+    quiz = models.Quiz.objects.prefetch_related('question_set').get(slug = slug)
+    questions = quiz.question_set.all() # type: ignore
+    total_questions = int(questions.count()) # type: ignore
+
+
+    attempts = models.Attempt.objects.filter(
+        attempted_by = request.user,
+        quiz = quiz,
+    ).order_by('attempted_at').prefetch_related('response_set')
+
+    for attempt in attempts:
+
+        responses = attempt.response_set.all().order_by('responded_at') # type: ignore
+        correct_responses = int(responses.filter(is_correct = True).count())
+
+        attempt.questions = questions # type: ignore
+        attempt.responses = responses # type: ignore
+        attempt.correct_responses = correct_responses # type: ignore
+
+    # display the responses: question > choice > is_correct
+    
+    context = {
+        'quiz' : quiz,
+        'total_questions' : total_questions,
+        'attempt_list' : attempts
+    }
+
+    return render(request, 'quiz/quiz_summary.html', context)
+
+# task: make sure only students get to attempt quiz
+
+# task: write the view for teacher to access quiz results

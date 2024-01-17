@@ -11,6 +11,7 @@ urlpatterns = [
     
     # student - attempting the quiz
     path('attempt/<slug:slug>', views.attemptQuiz, name = 'attempt'),
+    path('summary/<slug:slug>', views.displaySummary, name = 'summary'),
 
     # all users
     path('list/', views.ListQuizzes.as_view(), name = 'list'),
