@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'user_auth',
     'dashboard',
     'article',
+    'forum',
     'quiz',
 ]
 
