@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load filter_by_user_group %}
+
+
+{% block body %}
+
+    <h1>Forum</h1>
+    
+    {% if request.user|has_group:"student" %}
+        <br>
+
+        <div style="border: 1px solid black; margin-bottom: 20px; padding: 0px 20px 10px 20px;">
+            <h2>Ask a question:</h2>
+            <form method="POST">
+                {{ form.as_p }}
+                {% csrf_token %}
+
+                <input type="submit" value="Submit question">
+            </form><br>
+        </div>
+        
+    {% endif %}<br>
+
+    <h2>Recent questions:</h2>
+
+    {% for question in question_list %}
+        <hr>
+        <a href="{% url 'forum:question' question.slug %}">
+            <h3>
+                {{ question.title }}
+            </h3>
+        </a>
+        <p>
+            {{ question.body }}
+        </p>
+        <p>Answers: {{ question.answer_count }}
+                
+        </p>
+    {% endfor %}
+        
+{% endblock body %}
+    

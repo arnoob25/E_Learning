@@ -65,7 +65,7 @@ def save_new_questions_with_choices(request, quiz):
         logger.error("Question form is not valid.")
         return False
 
-@permission_required('quiz.add_question')
+@permission_required('quiz.add_question', raise_exception = True)
 def newQuestions(request, slug):
     quiz = models.Quiz.objects.get(slug=slug)
 
@@ -228,7 +228,7 @@ def control_progression(request, attempt, paginator):
     
     return page_obj, is_correct
 
-@permission_required('quiz.add_attempt')
+@permission_required('quiz.add_attempt', raise_exception = True)
 def attemptQuiz(request, slug):
     quiz, question_list = get_quiz(request, slug)
 
