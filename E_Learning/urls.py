@@ -27,6 +27,7 @@ urlpatterns = [
     path('account/', include('user_auth.urls')),
     path('dashboard/', include('dashboard.urls')),
     path('article/', include('article.urls')),
+    path('forum/', include('forum.urls')),
     path('quiz/', include('quiz.urls')),
 
     # users will be redirected based on login status

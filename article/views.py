@@ -1,4 +1,4 @@
-import constants
+import core.constants as constants
 from . import models
 from django.urls import reverse
 from django.views.generic import CreateView, DetailView, ListView
