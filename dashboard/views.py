@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from constants import PERMISSION_DENIED_MESSAGE
+from core.constants import PERMISSION_DENIED_MESSAGE
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 
