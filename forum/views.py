@@ -1,8 +1,6 @@
-from typing import Any
-from django.db.models.query import QuerySet
-from django.http import HttpResponse
 from . import forms
 from . import models
+from typing import Any
 from django.db.models import Count
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView
