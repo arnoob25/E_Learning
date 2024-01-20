@@ -1,6 +1,18 @@
 {% extends 'dashboard/base_dashboard.html' %}
 
 
-{% block dashboard %}
+{% block column1 %}
     <a href="{% url 'article:list' %}">Articles</a>
-{% endblock %}
+{% endblock column1 %}
+
+
+{% block column2 %}
+    <a href="{% url 'quiz:list' %}">Quizzes</a>
+{% endblock column2 %}
+
+
+{% block column3 %}
+    <a href="{% url 'forum:home' %}">Forum</a>
+{% endblock column3 %}
+    
+    

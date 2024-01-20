@@ -21,7 +21,7 @@ class NewArticle(PermissionRequiredMixin, CreateView):
     def get_success_url(self):
         return reverse('article:view', kwargs={'slug': self.object.slug})
 
-class ViewArticle(DetailView):
+class ReadArticle(DetailView):
     model = models.Article
     template_name = 'article/view_article.html'
 
