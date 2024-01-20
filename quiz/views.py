@@ -1,7 +1,7 @@
 import logging
 
 from httpx import request
-import constants
+import core.constants as constants
 from . import models, forms
 from django.urls import reverse
 from django.forms import formset_factory

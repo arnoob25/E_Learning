@@ -1,6 +1,5 @@
-import uuid
+from uuslug import uuslug
 from django.db import models
-from django.utils.text import slugify
 from django.contrib.auth import get_user_model
 
 # Create your models here.
@@ -14,7 +13,7 @@ class Question(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = f'{uuid.uuid4()}-{slugify(self.title)}'
+            self.slug = uuslug(self.title, instance=self, max_length=200)
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -24,4 +23,4 @@ class Answer(models.Model):
     question = models.ForeignKey(Question, blank = True, on_delete=models.CASCADE)
     body = models.TextField()
     created_by = models.ForeignKey(get_user_model(), blank = True, on_delete = models.CASCADE)
-    created_at = models.DateField(auto_now_add = True)
+    created_at = models.DateTimeField(auto_now_add = True)

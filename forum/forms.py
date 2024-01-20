@@ -1,11 +1,7 @@
-from logging import PlaceHolder
-
-from matplotlib import widgets
 from . import models
 from django import forms
 
 class NewQuestionForm(forms.ModelForm):
-    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -24,8 +20,15 @@ class NewQuestionForm(forms.ModelForm):
         }
 
 class NewAnswerForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['body'].label = ''
+
+    
     class Meta:
         model = models.Answer
-        fields = [
-            'body',
-        ]
+        fields = ['body']
+        widgets = {
+            'body' : forms.Textarea(attrs = {'placeholder' : 'Type answer here'})
+        }

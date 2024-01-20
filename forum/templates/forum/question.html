@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+
+{% block body %}
+
+    <a href="{% url 'forum:home' %}">Go back to forum home</a>
+    <br>
+
+    <div style="margin: 10px 0px 50px 0px;">
+        @{{ question.created_by }} at {{ question.created_at }}
+        <h1>{{ question.title }}</h1>
+        <div style="margin: 0px 10px;">
+            <h4>{{ question.body }}</h4>
+        </div>
+        <br>
+    </div>
+
+    
+    {% if request.user.is_authenticated %}
+        
+        <div style="border: 1px solid black; margin-bottom: 70px; padding: 0px 20px 10px 20px;">
+            <form method = "POST">
+                <h2>Write an answer</h2>
+                {{ form.as_p }}
+
+                {% csrf_token %}
+
+                <input type="submit" value="Add answer">
+            </form><br>
+        </div>
+    
+    {% endif %}
+        
+    
+    <div>
+        <h2>{{ answer_count }} Answers:</h2>
+        {% for answer in answer_set %}
+            <div style="border: 1px solid black; margin-bottom: 20px; padding: 0px 20px 10px 20px;">
+                <h6>@{{ answer.created_by }} at {{ answer.created_at }}</h6>
+                <p>
+                    {{ answer.body }}
+                </p>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock body %}
+    

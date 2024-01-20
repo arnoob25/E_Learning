@@ -4,14 +4,16 @@
 
 {% block body %}
 
+    <a href="{% url 'dashboard:display_dashboard' %}">Go back to the dashboard</a>
+
     <h1>Forum</h1>
     
     {% if request.user|has_group:"student" %}
         <br>
 
         <div style="border: 1px solid black; margin-bottom: 20px; padding: 0px 20px 10px 20px;">
-            <h2>Ask a question:</h2>
             <form method="POST">
+                <h2>Ask a question:</h2>
                 {{ form.as_p }}
                 {% csrf_token %}
 
@@ -25,13 +27,17 @@
 
     {% for question in question_list %}
         <hr>
-        <a href="{% url 'forum:question' question.slug %}">
-            <h3>
+        
+        <h3>
+            <a href="{% url 'forum:question' question.slug %}">
                 {{ question.title }}
-            </h3>
-        </a>
+            </a>
+             - @{{ question.created_by }} at {{ question.created_at }}
+
+        </h3>
+
         <p>
-            {{ question.body }}
+            {{ question.body|truncatechars:500 }}
         </p>
         <p>Answers: {{ question.answer_count }}
                 

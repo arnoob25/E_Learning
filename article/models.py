@@ -1,6 +1,5 @@
-import uuid
+from uuslug import uuslug
 from django.db import models
-from django.utils.text import slugify
 from django.contrib.auth import get_user_model
 
 # Create your models here.
@@ -14,7 +13,7 @@ class Article(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = f'{uuid.uuid4()}{slugify(self.title)}'
+            self.slug = uuslug(self.title, instance = self, max_length = 200)
         super().save(*args, **kwargs)
 
     def __str__(self):
