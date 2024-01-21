@@ -8,7 +8,8 @@
       <li>
         <h2>
           {{ attempt.attempted_at }} | 
-          Correct responses: {{ attempt.correct_responses }}/ {{ total_questions }}
+          ( {% if attempt.is_successful %}Successful{% else %}Unsuccessful{% endif %} )
+          <!-- Correct responses: {{ attempt.correct_responses }}/ {{ total_questions }} -->
         </h2>
 
         <ol type="A">

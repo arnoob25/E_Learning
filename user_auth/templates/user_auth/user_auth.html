@@ -12,4 +12,12 @@
         <input type="submit" value="Submit" />
     </form>
 
+    {% if request.resolver_match.url_name == 'login' %}
+        <br>
+        <a href = "{% url "user_auth:signup" %}">or, SignUp</a>
+    {% else %}
+        <br>
+        <a href = "{% url "user_auth:login" %}">or, Login</a>
+    {% endif %}
+
 {% endblock %}
