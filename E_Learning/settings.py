@@ -129,7 +129,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Redirect 
+# Redirect
 
 LOGIN_URL = 'user_auth:login'
 LOGIN_REDIRECT_URL = 'dashboard:display_dashboard'
