@@ -1,7 +1,22 @@
 {% extends 'display_list.html' %}
+{% load filter_by_user_group %}
 
 {% block object_page %}
-  <a href="{% url 'quiz:attempt' object.slug%}"> 
-    <h2>{{ object.title|title }}</h2>
-  </a>
+  {% if request.user|has_group:"student" %}
+    <h2>
+      <a href="{% url 'quiz:attempt' object.slug %}">
+        {{ object.title | title }}
+      </a>
+    </h2>
+    {{ object.subject | title }} - {{ object.created_by }}
+  {% else %}
+    {% if object.created_by == request.user %}
+      <h2>
+      <a href="{% url 'quiz:review' object.slug %}">
+        {{ object.title | title }}
+      </a>
+    </h2>
+    {{ object.created_at }}
+    {% endif %}
+  {% endif %}
 {% endblock %}

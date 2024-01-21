@@ -1,6 +1,6 @@
-from uuslug import uuslug
-from django.db import models
 from django.contrib.auth import get_user_model
+from django.db import models
+from uuslug import uuslug
 
 # Create your models here.
 
@@ -44,14 +44,10 @@ class Attempt(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete = models.CASCADE)
     attempted_by = models.ForeignKey(get_user_model(), blank = True, on_delete = models.CASCADE)
     attempted_at = models.DateTimeField(auto_now_add = True)
+    is_successful = models.BooleanField(default = False)
 
     def __str__(self):
-        return f'{(self.quiz.title)} {str(self.attempted_at)}'
-
-    class Meta: 
-        permissions = [
-            ('access_attempt', 'can access attempt')
-        ]
+        return f"{str('successful' if self.is_successful else 'unsuccessful')} {self.quiz.title} {str(self.attempted_at)}"
 
 class Response(models.Model):
     attempt = models.ForeignKey(Attempt, blank = True, on_delete=models.CASCADE)

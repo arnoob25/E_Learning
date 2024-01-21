@@ -19,11 +19,10 @@
                 
                 </h2>
             </a>
+            <p>{{ object.created_at }}</p>
+            <hr>
         {% endblock object_page %}
-           
 
-        <p>{{ object.created_at }}</p>
-        <hr>
     {% empty %}
         <p>{{ empty_list_message }}</p>
     {% endfor %}

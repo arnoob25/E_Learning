@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+
+{% block body %}
+    <a href="{% url 'quiz:list' %}">Go back to the list</a>
+
+    <h1>{{ quiz.title }}</h1>
+
+
+    <h2>Attempts:</h2>
+
+    
+    {% for user, attempts in student_attempts.items %}
+        @{{ user.username }} 
+
+        <ol>
+            {% for attempt in attempts %}
+                <li>
+                    {{ attempt.attempted_at }} | 
+                    ( 
+                    {% if attempt.is_successful %}
+                        Successful
+                    {% else %}
+                        Unsuccessful
+                    {% endif %} 
+                    )
+                </li>
+            {% empty %}
+                Something's wrong
+            {% endfor %}
+        </ol> 
+    {% empty %}
+        No attempts yet
+    {% endfor %}
+
+        
+{% endblock body %}
+    
